@@ -1,8 +1,11 @@
 package com.example.homework2;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -10,6 +13,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -28,6 +32,7 @@ public class KaohsiungMRTStationsActivity extends AppCompatActivity {
     TextView tv_main;
     Button btn_get_data, btn_clear_data;
     ListView lv_api_data;
+    SwipeRefreshLayout srl_main;
     ArrayList<String> MRT_station_arrListOfString;
     ArrayAdapter<String> MRT_station_arrAdapter;
     String strAPI_URL = "https://data.kcg.gov.tw/Json/Get/4278fc6a-c3ea-4192-8ce0-40f00cdb40dd";
@@ -50,9 +55,37 @@ public class KaohsiungMRTStationsActivity extends AppCompatActivity {
         btn_get_data = findViewById(R.id.btn_get_data_mrt);
         btn_clear_data = findViewById(R.id.btn_clear_data_mrt);
         lv_api_data = findViewById(R.id.lv_kaohsiung_mrt_station);
-        pb_spinner=findViewById(R.id.pb_spinner);
+        pb_spinner = findViewById(R.id.pb_spinner);
+        srl_main = findViewById(R.id.srl_main);
 
         MRT_station_arrListOfString = new ArrayList<String>();
+
+
+        srl_main.setColorSchemeColors(0x0000ff);
+        srl_main.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                if (MRT_station_arrListOfString != null && MRT_station_arrAdapter != null) {
+                    MRT_station_arrListOfString.clear();
+                    MRT_station_arrAdapter.notifyDataSetChanged();
+                }
+                btn_get_data.callOnClick();//等同按下更新
+                //關閉更新動畫
+                srl_main.setRefreshing(false);
+            }
+        });
+
+        btn_clear_data.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if ((MRT_station_arrListOfString != null) && (MRT_station_arrAdapter != null)) {
+                    MRT_station_arrListOfString.clear();
+                    MRT_station_arrAdapter.notifyDataSetChanged();
+                    tv_main.setText(strTitle + "\nAPI 資料已清空…");
+                    resetTextView(5000);
+                }
+            }
+        });
 
         btn_get_data.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,31 +104,55 @@ public class KaohsiungMRTStationsActivity extends AppCompatActivity {
                                     strLat = jsonObjectMRTStation.getString("車站緯度");
                                     strLng = jsonObjectMRTStation.getString("車站經度");
                                     MRT_station_arrListOfString.add(jsonObjectMRTStation.getInt("Seq") + "." + strStationName +
-                                            "\n座標：" + strLat + ", " + strLng);
+                                            "捷運站\n座標：" + strLat + ", " + strLng);
                                 }
                                 MRT_station_arrAdapter = new ArrayAdapter<String>(KaohsiungMRTStationsActivity.this,
                                         android.R.layout.simple_list_item_1, MRT_station_arrListOfString);
                                 lv_api_data.setAdapter(MRT_station_arrAdapter);
-                                pb_spinner.setVisibility(View.INVISIBLE);
+                                pb_spinner.setVisibility(View.GONE);
                                 tv_main.setText(strTitle + "\nAPI資料讀取完成，解析成功！！");
+                                resetTextView(5000);
+                                lv_api_data.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                    @Override
+                                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                        String itemString = MRT_station_arrListOfString.get(position);
+                                        int intStartOfGeo = itemString.indexOf("座標");
+                                        int intStartOfName = itemString.indexOf(".");
+                                        int intEndOfName = itemString.indexOf("\n");
+                                        String strNameOfStation = itemString.substring(intStartOfName + 1, intEndOfName);
+                                        String strGeoPosition = itemString.substring(intStartOfGeo + 3);
+                                        String strArrLatLng[] = strGeoPosition.split(",");
+                                        String strLabel = strArrLatLng[0] + "," + strArrLatLng[1] + "(" + strNameOfStation + ")";
+                                        String strQuery = Uri.decode(strLabel);
+                                        Intent intentGeo = new Intent(Intent.ACTION_VIEW, Uri.parse("geo:" + strGeoPosition
+                                                + "?q=" + strQuery + "z=32"));
+                                        startActivity(intentGeo);
+
+                                    }
+                                });
                             } catch (JSONException ex) {
-                                pb_spinner.setVisibility(View.INVISIBLE);
+                                pb_spinner.setVisibility(View.GONE);
                                 tv_main.setText(strTitle + "\nAPI資料解析失敗，錯誤訊息：\n" + ex.getMessage());
+                                resetTextView(5000);
                             }
                         }
                     }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError volleyError) {
-                            pb_spinner.setVisibility(View.INVISIBLE);
+                            pb_spinner.setVisibility(View.GONE);
                             tv_main.setText(strTitle + "\n向伺服器取回API資料時發生 VolleyError，錯誤訊息：\n" + volleyError.getMessage());
+                            resetTextView(5000);
                         }
                     });
+
                     Volley.newRequestQueue(KaohsiungMRTStationsActivity.this).add(request);
                     tv_main.setText(strTitle + "\nAPI 資料正在讀取中…");
                     pb_spinner.setVisibility(View.VISIBLE);
+
                 } catch (Exception ex) {
                     tv_main.setText(strTitle + "\n嘗試向伺服器發送API請求失敗，錯誤訊息：\n" + ex.getMessage());
-                    pb_spinner.setVisibility(View.INVISIBLE);
+                    resetTextView(5000);
+                    pb_spinner.setVisibility(View.GONE);
                 }
             }
         });

@@ -46,11 +46,18 @@
         android:layout_margin="10dp"
         android:layout_gravity="center_horizontal"
         android:visibility="invisible"/>
-
-    <ListView
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/lv_kaohsiung_mrt_station"
-        android:layout_margin="15dp"/>
+        android:id="@+id/srl_main">
+
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/lv_kaohsiung_mrt_station"
+            android:layout_margin="15dp"/>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
 
 </LinearLayout>
