@@ -34,7 +34,18 @@
             android:layout_weight="1"/>
 
 
+
+
     </LinearLayout>
+
+    <ProgressBar
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:id="@+id/pb_spinner"
+        style="@android:style/Widget.ProgressBar"
+        android:layout_margin="10dp"
+        android:layout_gravity="center_horizontal"
+        android:visibility="invisible"/>
 
     <ListView
         android:layout_width="match_parent"

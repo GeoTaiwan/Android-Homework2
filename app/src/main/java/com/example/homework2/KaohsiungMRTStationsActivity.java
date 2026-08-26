@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,6 +24,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class KaohsiungMRTStationsActivity extends AppCompatActivity {
+    ProgressBar pb_spinner;
     TextView tv_main;
     Button btn_get_data, btn_clear_data;
     ListView lv_api_data;
@@ -48,6 +50,7 @@ public class KaohsiungMRTStationsActivity extends AppCompatActivity {
         btn_get_data = findViewById(R.id.btn_get_data_mrt);
         btn_clear_data = findViewById(R.id.btn_clear_data_mrt);
         lv_api_data = findViewById(R.id.lv_kaohsiung_mrt_station);
+        pb_spinner=findViewById(R.id.pb_spinner);
 
         MRT_station_arrListOfString = new ArrayList<String>();
 
@@ -73,21 +76,26 @@ public class KaohsiungMRTStationsActivity extends AppCompatActivity {
                                 MRT_station_arrAdapter = new ArrayAdapter<String>(KaohsiungMRTStationsActivity.this,
                                         android.R.layout.simple_list_item_1, MRT_station_arrListOfString);
                                 lv_api_data.setAdapter(MRT_station_arrAdapter);
+                                pb_spinner.setVisibility(View.INVISIBLE);
                                 tv_main.setText(strTitle + "\nAPI資料讀取完成，解析成功！！");
                             } catch (JSONException ex) {
+                                pb_spinner.setVisibility(View.INVISIBLE);
                                 tv_main.setText(strTitle + "\nAPI資料解析失敗，錯誤訊息：\n" + ex.getMessage());
                             }
                         }
                     }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError volleyError) {
+                            pb_spinner.setVisibility(View.INVISIBLE);
                             tv_main.setText(strTitle + "\n向伺服器取回API資料時發生 VolleyError，錯誤訊息：\n" + volleyError.getMessage());
                         }
                     });
                     Volley.newRequestQueue(KaohsiungMRTStationsActivity.this).add(request);
                     tv_main.setText(strTitle + "\nAPI 資料正在讀取中…");
+                    pb_spinner.setVisibility(View.VISIBLE);
                 } catch (Exception ex) {
                     tv_main.setText(strTitle + "\n嘗試向伺服器發送API請求失敗，錯誤訊息：\n" + ex.getMessage());
+                    pb_spinner.setVisibility(View.INVISIBLE);
                 }
             }
         });
