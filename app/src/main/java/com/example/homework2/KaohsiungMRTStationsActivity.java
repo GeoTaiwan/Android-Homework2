@@ -1,6 +1,9 @@
 package com.example.homework2;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -38,6 +41,11 @@ public class KaohsiungMRTStationsActivity extends AppCompatActivity {
     String strAPI_URL = "https://data.kcg.gov.tw/Json/Get/4278fc6a-c3ea-4192-8ce0-40f00cdb40dd";
     String strTitle = "高雄市捷運站資料";
     String strStationName, strLat, strLng;
+    // 以下為SQLite用
+    private SQLiteDatabase db;
+    private SqliteStationDbHelper stationDbHelper;
+    private static final String DATATABLE_NAME = "stations";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +68,11 @@ public class KaohsiungMRTStationsActivity extends AppCompatActivity {
 
         MRT_station_arrListOfString = new ArrayList<String>();
 
+        // SQLite資料庫實作
+        stationDbHelper = new SqliteStationDbHelper(KaohsiungMRTStationsActivity.this);
+        db = stationDbHelper.getWritableDatabase();
 
+        // 下拉重整
         srl_main.setColorSchemeColors(0x0000ff);
         srl_main.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -98,6 +110,8 @@ public class KaohsiungMRTStationsActivity extends AppCompatActivity {
                             try {
                                 JSONArray jsonArrayData = jsonObjectResponse.getJSONArray("Data");
                                 JSONObject jsonObjectMRTStation = new JSONObject();
+                                // 儲存至SQLite資料庫用
+                                ContentValues cv;
                                 for (i = 0; i < jsonArrayData.length(); i++) {
                                     jsonObjectMRTStation = jsonArrayData.getJSONObject(i);
                                     strStationName = jsonObjectMRTStation.getString("車站中文名稱");
@@ -105,6 +119,13 @@ public class KaohsiungMRTStationsActivity extends AppCompatActivity {
                                     strLng = jsonObjectMRTStation.getString("車站經度");
                                     MRT_station_arrListOfString.add(jsonObjectMRTStation.getInt("Seq") + "." + strStationName +
                                             "捷運站\n座標：" + strLat + ", " + strLng);
+                                    // 儲存至SQLite資料庫
+                                    cv = new ContentValues();
+                                    cv.put("station_id", jsonObjectMRTStation.getInt("Seq"));
+                                    cv.put("station_name", strStationName);
+                                    cv.put("station_lat", strLat);
+                                    cv.put("station_lng", strLng);
+                                    db.insert(DATATABLE_NAME, null, cv);
                                 }
                                 MRT_station_arrAdapter = new ArrayAdapter<String>(KaohsiungMRTStationsActivity.this,
                                         android.R.layout.simple_list_item_1, MRT_station_arrListOfString);
@@ -133,7 +154,8 @@ public class KaohsiungMRTStationsActivity extends AppCompatActivity {
                             } catch (JSONException ex) {
                                 pb_spinner.setVisibility(View.GONE);
                                 tv_main.setText(strTitle + "\nAPI資料解析失敗，錯誤訊息：\n" + ex.getMessage());
-                                resetTextView(5000);
+//                                resetTextView(5000);
+                                dbToListView();
                             }
                         }
                     }, new Response.ErrorListener() {
@@ -141,7 +163,8 @@ public class KaohsiungMRTStationsActivity extends AppCompatActivity {
                         public void onErrorResponse(VolleyError volleyError) {
                             pb_spinner.setVisibility(View.GONE);
                             tv_main.setText(strTitle + "\n向伺服器取回API資料時發生 VolleyError，錯誤訊息：\n" + volleyError.getMessage());
-                            resetTextView(5000);
+//                            resetTextView(5000);
+                            dbToListView();
                         }
                     });
 
@@ -151,7 +174,8 @@ public class KaohsiungMRTStationsActivity extends AppCompatActivity {
 
                 } catch (Exception ex) {
                     tv_main.setText(strTitle + "\n嘗試向伺服器發送API請求失敗，錯誤訊息：\n" + ex.getMessage());
-                    resetTextView(5000);
+//                    resetTextView(5000);
+                    dbToListView();
                     pb_spinner.setVisibility(View.GONE);
                 }
             }
@@ -168,4 +192,25 @@ public class KaohsiungMRTStationsActivity extends AppCompatActivity {
             }
         }, millisecond);
     }
+
+    private void dbToListView() {
+        int i, j;
+        String[] columnNames;
+        Cursor c = db.rawQuery("SELECT * FROM " + DATATABLE_NAME, null);
+        columnNames = c.getColumnNames();
+        c.moveToFirst();
+        for (i = 0; i < c.getCount(); i++) {
+
+            MRT_station_arrListOfString.add(c.getInt(0) + "." +
+                    c.getString(1) + "捷運站\n座標：" +
+                    c.getString(2) + "," + c.getString(3));
+            c.moveToNext();
+        }
+        MRT_station_arrAdapter = new ArrayAdapter<String>(KaohsiungMRTStationsActivity.this,
+                android.R.layout.simple_list_item_1, MRT_station_arrListOfString);
+        lv_api_data.setAdapter(MRT_station_arrAdapter);
+        tv_main.setText(strTitle + "\n使用SQLite取回離線資料成功！");
+        resetTextView(3000);
+    }
+
 }
