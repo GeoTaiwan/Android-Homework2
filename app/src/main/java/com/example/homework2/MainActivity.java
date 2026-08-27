@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -90,8 +91,21 @@ public class MainActivity extends AppCompatActivity {
                 progressBar.setVisibility(View.GONE);
                 swipeRefreshLayout.setRefreshing(false); // 停止下拉更新的轉圈動畫
                 if (response.isSuccessful() && response.body() != null) {
+                    List<DataItem> dataList = response.body().getData();
                     // 【關鍵點】這裡就是你想要的：只把 Data[] 抽出來丟給 Adapter
-                    adapter.setData(response.body().getData());
+                    adapter.setData(dataList);
+
+                    // 2. 寫入 Room 資料庫 (背景執行緒)
+                    new Thread(() -> {
+                        // 取得資料庫實體
+                        AppDatabase db = AppDatabase.getDatabase(MainActivity.this);
+
+                        // 清空舊資料，存入新資料
+                        db.mrtDao().deleteAll();
+                        db.mrtDao().insertAll(dataList);
+
+                        Log.d("ROOM", "資料已成功備份到本地端！");
+                    }).start();
                 } else {
                     Log.e("API_ERROR", "Response Code: " + response.code());
                 }

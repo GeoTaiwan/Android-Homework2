@@ -1,8 +1,12 @@
 package com.example.homework2;
 
-import com.google.gson.annotations.SerializedName;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
+import com.google.gson.annotations.SerializedName;
+@Entity(tableName = "mrt_stations")
 public class DataItem {
+    @PrimaryKey
     @SerializedName("Seq")
     private int station_index;
     @SerializedName("車站編號")
