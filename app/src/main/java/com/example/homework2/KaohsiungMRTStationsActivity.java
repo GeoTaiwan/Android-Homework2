@@ -132,7 +132,7 @@ public class KaohsiungMRTStationsActivity extends AppCompatActivity {
                                         android.R.layout.simple_list_item_1, MRT_station_arrListOfString);
                                 lv_api_data.setAdapter(MRT_station_arrAdapter);
                                 pb_spinner.setVisibility(View.GONE);
-                                SystemClock.sleep(5000);
+//                                SystemClock.sleep(5000);
                                 showAlert("\nAPI資料讀取完成，解析成功！！",3000);
 //                                tv_main.setText(strTitle + "\nAPI資料讀取完成，解析成功！！");
 //                                resetTextView(5000);

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--        按鈕按下時的效果：state_pressed="true"-->
+    <item android:state_pressed="true">
+
+        <shape>
+
+            <gradient android:startColor="#15680A"
+                android:endColor="#00FF08"
+                android:angle="270"
+                />
+            <corners android:radius="10dp"/>
+
+
+        </shape>
+    </item>
+<!--    按鈕正常時的-->
+    <item>
+        <shape>
+
+            <gradient android:startColor="#00FF08"
+                android:endColor="#15680A"
+                android:angle="270"
+                />
+            <corners android:radius="10dp"/>
+        </shape>
+    </item>
+</selector>

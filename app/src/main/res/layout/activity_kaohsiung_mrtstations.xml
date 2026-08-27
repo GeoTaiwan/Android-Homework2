@@ -11,6 +11,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/tv_kaohsiung_mrt_station_title"
         android:text="高雄市捷運站資料"
+        android:textColor="#00f"
         android:textSize="28sp"
         android:gravity="center"/>
 
@@ -24,14 +25,20 @@
             android:layout_height="wrap_content"
             android:id="@+id/btn_get_data_mrt"
             android:text="讀取資料"
-            android:layout_weight="1"/>
+            android:textColor="#fff"
+            android:layout_weight="1"
+            android:background="@drawable/button_custom"
+            android:layout_margin="5dp"/>
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/btn_clear_data_mrt"
             android:text="清空畫面"
-            android:layout_weight="1"/>
+            android:textColor="#fff"
+            android:layout_weight="1"
+            android:background="@drawable/button_custom"
+            android:layout_margin="5dp"/>
 
 
 

@@ -41,6 +41,9 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.4.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.2.0'
     implementation 'com.android.volley:volley:1.2.1'
+    // Retrofit 與 Gson 轉換器
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
 
     testImplementation libs.junit
     androidTestImplementation libs.espresso.core
