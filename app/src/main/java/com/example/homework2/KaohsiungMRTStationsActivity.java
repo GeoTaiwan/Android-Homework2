@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -131,8 +132,10 @@ public class KaohsiungMRTStationsActivity extends AppCompatActivity {
                                         android.R.layout.simple_list_item_1, MRT_station_arrListOfString);
                                 lv_api_data.setAdapter(MRT_station_arrAdapter);
                                 pb_spinner.setVisibility(View.GONE);
-                                tv_main.setText(strTitle + "\nAPI資料讀取完成，解析成功！！");
-                                resetTextView(5000);
+                                SystemClock.sleep(5000);
+                                showAlert("\nAPI資料讀取完成，解析成功！！",3000);
+//                                tv_main.setText(strTitle + "\nAPI資料讀取完成，解析成功！！");
+//                                resetTextView(5000);
                                 lv_api_data.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                     @Override
                                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -183,15 +186,6 @@ public class KaohsiungMRTStationsActivity extends AppCompatActivity {
 
     }
 
-    private void resetTextView(int millisecond) {
-        Handler h = new Handler();
-        h.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                tv_main.setText(strTitle);
-            }
-        }, millisecond);
-    }
 
     private void dbToListView() {
         int i, j;
@@ -209,8 +203,23 @@ public class KaohsiungMRTStationsActivity extends AppCompatActivity {
         MRT_station_arrAdapter = new ArrayAdapter<String>(KaohsiungMRTStationsActivity.this,
                 android.R.layout.simple_list_item_1, MRT_station_arrListOfString);
         lv_api_data.setAdapter(MRT_station_arrAdapter);
-        tv_main.setText(strTitle + "\n使用SQLite取回離線資料成功！");
-        resetTextView(3000);
+        showAlert("\n使用SQLite取回離線資料成功！",3000);
+
+    }
+
+    private void showAlert(String msg, int millisec) {
+        tv_main.setText(strTitle + msg);
+        resetTextView(millisec);
+    }
+
+    private void resetTextView(int millisecond) {
+        Handler h = new Handler();
+        h.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                tv_main.setText(strTitle);
+            }
+        }, millisecond);
     }
 
 }
