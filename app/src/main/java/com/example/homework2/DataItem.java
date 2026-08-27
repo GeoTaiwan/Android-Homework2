@@ -2,76 +2,48 @@ package com.example.homework2;
 
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
-
 import com.google.gson.annotations.SerializedName;
+
 @Entity(tableName = "mrt_stations")
 public class DataItem {
+
     @PrimaryKey
     @SerializedName("Seq")
-    private int station_index;
+    private int seq;
+
     @SerializedName("車站編號")
-    private String station_no;
+    private String no;
+
     @SerializedName("車站中文名稱")
-    private String station_name;
+    private String name;
+
     @SerializedName("車站英文名稱")
-    private String station_english_name;
+    private String englishName;
+
     @SerializedName("車站緯度")
-    private String station_lat;
+    private String lat;
+
     @SerializedName("車站經度")
-    private String station_lng;
+    private String lng;
 
-    public int getSeq() {
-        return station_index;
-    }
+    // --- 以下為 Getter ---
+    public int getSeq() { return seq; }
+    public String getNo() { return no; }
+    public String getName() { return name; }
+    public String getEnglishName() { return englishName; }
+    public String getLat() { return lat; }
+    public String getLng() { return lng; }
 
-    public String getNo() {
-        return station_no;
-    }
+    // --- 以下為 Setter ---
+    public void setSeq(int seq) { this.seq = seq; }
+    public void setNo(String no) { this.no = no; }
+    public void setName(String name) { this.name = name; }
+    public void setEnglishName(String englishName) { this.englishName = englishName; }
+    public void setLat(String lat) { this.lat = lat; }
+    public void setLng(String lng) { this.lng = lng; }
 
-    public String getName() {
-        return station_name;
-    }
-
-    public String getEnglishName() {
-        return station_english_name;
-    }
-
-    public String getLat() {
-        return station_lat;
-    }
-
-    public String getLng() {
-        return station_lng;
-    }
-
-    public void setSeq(int seq) {
-        station_index = seq;
-    }
-
-    public void setNo(String no) {
-        station_no = no;
-    }
-
-    public void setName(String name) {
-        station_name = name;
-    }
-
-    public void setEnglishName(String englishName) {
-        station_english_name = englishName;
-    }
-
-    public void setLat(String lat) {
-        station_lat = lat;
-    }
-
-    public void setLng(String lng) {
-        station_lng = lng;
-    }
-
-
+    // --- 組合經緯度的客製化方法 ---
     public String getGeo() {
-        return station_lat + ", " + station_lng;
+        return lat + ", " + lng;
     }
-
-
 }
