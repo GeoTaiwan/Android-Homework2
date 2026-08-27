@@ -4,6 +4,17 @@
 <!--    <style name="Base.Theme.Homework2" parent="Theme.Material3.DayNight.NoActionBar">-->
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <!-- 【修改這裡】這會決定你的實心按鈕 (btn_get_data_mrt) 的背景色 -->
+        <item name="colorPrimary">@color/my_primary</item>
+
+        <!-- 這會決定實心按鈕上的文字顏色 -->
+        <item name="colorOnPrimary">@color/my_on_primary</item>
+
+        <!-- 【修改這裡】這會決定你的次要按鈕 (btn_clear_data_mrt) 的淺色背景 -->
+        <item name="colorPrimaryContainer">@color/my_primary_container</item>
+
+        <!-- 這會決定次要按鈕上的文字顏色 -->
+        <item name="colorOnPrimaryContainer">@color/my_on_primary_container</item>
     </style>
 
     <style name="Theme.Homework2" parent="Base.Theme.Homework2" />

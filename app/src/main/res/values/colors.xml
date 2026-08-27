@@ -2,4 +2,11 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- 加入自訂的品牌顏色 (以藍色系為例) -->
+    <color name="my_primary">#0056D2</color>          <!-- 主要深藍色 (給實心按鈕) -->
+    <color name="my_on_primary">#FFFFFF</color>       <!-- 主要顏色上面的字體顏色 (白色) -->
+
+    <color name="my_primary_container">#D7E3FF</color><!-- 淺藍色 (給 Tonal 次要按鈕的背景) -->
+    <color name="my_on_primary_container">#001B3F</color> <!-- 次要按鈕上面的字體顏色 (深藍) -->
 </resources>
