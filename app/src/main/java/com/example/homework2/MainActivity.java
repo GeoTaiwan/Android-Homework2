@@ -72,6 +72,13 @@ public class MainActivity extends AppCompatActivity {
             fetchData(); // 下拉時 SwipeRefreshLayout 會自帶讀取動畫，直接呼叫 fetchData 即可
         });
 
+        // 【新增這行】App 開啟時，先秒速載入上次的資料
+        loadDataFromDatabase();
+
+        // 然後再發起網路請求，看有沒有最新資料可以覆蓋
+        progressBar.setVisibility(View.VISIBLE);
+        fetchData();
+
     }
 
     private void fetchData() {
@@ -117,9 +124,35 @@ public class MainActivity extends AppCompatActivity {
                 progressBar.setVisibility(View.GONE);
                 swipeRefreshLayout.setRefreshing(false);
                 Log.e("API_ERROR", "連線失敗: " + t.getMessage());
+
+                // 提醒使用者目前沒有網路
+                Toast.makeText(MainActivity.this, "目前無網路連線，顯示離線資料", Toast.LENGTH_LONG).show();
+
+                // （選擇性）其實在 onCreate 已經載入過一次了，
+                // 但如果是使用者手動按「讀取按鈕」失敗，也可以再呼叫一次確保畫面有資料
+                loadDataFromDatabase();
             }
         });
     }
 
+    private void loadDataFromDatabase() {
+        // 1. 開啟背景執行緒去讀取資料庫
+        new Thread(() -> {
+            AppDatabase db = AppDatabase.getDatabase(MainActivity.this);
+            // 呼叫我們在 DAO 寫好的 getAllStations()
+            List<DataItem> localData = db.mrtDao().getAllStations();
+
+            // 2. 切換回主執行緒 (Main Thread) 來更新畫面
+            runOnUiThread(() -> {
+                if (localData != null && !localData.isEmpty()) {
+                    // 如果資料庫裡有舊資料，就塞給 Adapter
+                    adapter.setData(localData);
+                    Log.d("ROOM", "成功載入本地離線資料：" + localData.size() + "筆");
+                } else {
+                    Log.d("ROOM", "本地資料庫是空的，必須連上網路。");
+                }
+            });
+        }).start();
+    }
 
 }
