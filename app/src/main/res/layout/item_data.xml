@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- 外層使用 CardView 製作卡片效果：圓角與微微的陰影 -->
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<!--<androidx.cardview.widget.CardView-->
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="16dp"
     android:layout_marginVertical="8dp"
     app:cardCornerRadius="12dp"
-    app:cardElevation="3dp">
+    app:cardElevation="3dp"
+    android:clickable="true"
+    android:focusable="true"
+    app:rippleColor="#33000000">
+<!--    最後三行是使項目有水波紋效果，因為顏色與背景重疊，要特別設定顏色-->
 
     <!-- 內層使用 ConstraintLayout 攤平結構，提升滑動效能 -->
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -87,4 +93,4 @@
             android:gravity="center_vertical"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>
